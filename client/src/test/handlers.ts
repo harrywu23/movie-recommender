@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { BASE_URL } from "../api";
 
 export const handlers = [
   http.get("https://api.themoviedb.org/3/search/movie", () => {
@@ -132,7 +133,7 @@ export const handlers = [
   },
 ),
     // derived from Final Destination Bloodlines for guaranteed image paths and genre codes
-    http.get("http://localhost:5000/api/movies/random", () => {
+    http.get(`${BASE_URL}/movies/random`, () => {
         return HttpResponse.json({
         id: 123,
         title: "Not a real movie",

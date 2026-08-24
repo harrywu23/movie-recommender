@@ -3,6 +3,7 @@ import App from "../App";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { delay, http, HttpResponse } from "msw";
 import { server } from "../test/server";
+import { BASE_URL } from "../api";
 import LocationDisplay from "../test/LocationDisplay";
 
 describe("RandomButton", () => {
@@ -44,7 +45,7 @@ describe("RandomButton", () => {
     it("changes text based on button state", async () => {
 
         server.use( // replace msw handler with 503 error
-            http.get("http://localhost:5000/api/movies/random", async () => {
+            http.get(`${BASE_URL}/movies/random`, async () => {
                 await delay(200); // trivially long to complete mid-state assertion
                 return HttpResponse.json({ message: "Successful entry" }, { status: 200 });
             })
@@ -81,7 +82,7 @@ describe("RandomButton", () => {
 
     it("gracefully error triggers and recovers", async () => {
         server.use( // replace msw handler with 503 error
-            http.get("http://localhost:5000/api/movies/random", async () => {
+            http.get(`${BASE_URL}/movies/random`, async () => {
                 await delay(200); // trivially long to complete mid-state assertion
                 return HttpResponse.json({ message: "Service down" }, { status: 503 });
             })

@@ -12,8 +12,11 @@ dotenv.config({path: __dirname + "/../.env"});
 const app = express();
 app.disable("x-powered-by");
 const PORT = process.env.BACKEND_PORT || 5000;
+// Falls back like PORT does: without it a missing VITE_FRONTEND_PORT silently
+// becomes "http://localhost:undefined", and the browser blocks every response.
+const FRONTEND_PORT = process.env.VITE_FRONTEND_PORT || 5173;
 
-app.use(cors({ origin: `http://localhost:${process.env.VITE_FRONTEND_PORT}`}));
+app.use(cors({ origin: `http://localhost:${FRONTEND_PORT}`}));
 app.use(express.json());
 
 // Routes
@@ -21,4 +24,9 @@ app.use("/api/movies", movieRoutes);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Guarded so the test suite can import the app without binding the port.
+if (process.env.NODE_ENV !== "test") {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+export default app;
